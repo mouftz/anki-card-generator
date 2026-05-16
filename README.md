@@ -1,4 +1,4 @@
-# Anki Card Generator
+# MedDeck
 
 Desktop app that auto-generates Anki flashcards from question screenshots — built for med students using UWorld and similar question banks.
 
