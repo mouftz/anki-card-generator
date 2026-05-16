@@ -8,6 +8,9 @@ Desktop app that auto-generates Anki flashcards from question screenshots — bu
 2. Press `⌘ Shift G`
 3. AI extracts the question, answer, and explanation from the screen
 4. Card is automatically created and pushed to Anki
+<img width="1512" height="800" alt="image" src="https://github.com/user-attachments/assets/96a4130a-9eab-4da0-8744-1f926883490d" />
+<img width="503" height="602" alt="image" src="https://github.com/user-attachments/assets/d59165e9-29e2-4bc1-a661-7941a15c1563" />
+<img width="662" height="300" alt="image" src="https://github.com/user-attachments/assets/599077e9-9682-4302-9432-9fd4323b9df7" />
 
 ## Stack
 
