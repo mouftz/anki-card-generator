@@ -52,6 +52,3 @@ cd frontend
 npm install
 npm start
 ~~~
-
-## Status
-MVP — generates and pushes cards end-to-end. Built in one night.
