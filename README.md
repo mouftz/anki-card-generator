@@ -25,20 +25,17 @@ Desktop app that auto-generates Anki flashcards from question screenshots — bu
 - An [OpenRouter](https://openrouter.ai) API key (free tier works)
 
 ### Backend
-\`\`\`bash
+~~~bash
 cd backend
 pip install -r requirements.txt
 cp .env.example .env
 # Add your OpenRouter API key to .env
 uvicorn main:app --reload --port 8001
-\`\`\`
+~~~
 
 ### Frontend
-\`\`\`bash
+~~~bash
 cd frontend
 npm install
 npm start
-\`\`\`
-
-## Status
-MVP working — generates and pushes cards end-to-end. Built in one night.
+~~~
