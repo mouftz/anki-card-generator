@@ -7,6 +7,7 @@ function createPopupWindow() {
   const { width } = screen.getPrimaryDisplay().workAreaSize;
   
   popupWindow = new BrowserWindow({
+    title: MedDeck,
     width: 500,
     height: 600,
     x: width - 520,
