@@ -42,4 +42,3 @@ npm start
 
 ## Status
 MVP working — generates and pushes cards end-to-end. Built in one night.
-EOF
