@@ -16,13 +16,15 @@ async def generate_card(req: ScreenshotRequest):
     try:
         card = generate_anki_card(req.image_base64)
         
-        # Make sure the deck exists
-        create_deck(req.deck_name)
+        if not card.get("is_question", False):
+            return {
+                "is_question": False,
+                "reason": card.get("reason", "Not a medical question")
+            }
         
-        # Add reason as a tag
+        create_deck(req.deck_name)
         tags = [req.reason.lower().replace(" ", "_")]
         
-        # Push to Anki
         note_id = add_card(
             deck_name=req.deck_name,
             front=card["anki_front"],
@@ -31,6 +33,7 @@ async def generate_card(req: ScreenshotRequest):
         )
         
         return {
+            "is_question": True,
             "card": card,
             "anki_note_id": note_id,
             "deck": req.deck_name

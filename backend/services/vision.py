@@ -12,14 +12,23 @@ client = OpenAI(
 )
 
 def generate_anki_card(image_base64: str) -> dict:
-    prompt = """This is a screenshot of a medical exam question the user got wrong.
-Extract the following and return as JSON only, no markdown, no backticks:
+    prompt = """This is a screenshot the user took.
+First, determine if this is a medical exam/study question with a clear correct answer.
+
+If it IS a medical question, return JSON only, no markdown:
 {
+  "is_question": true,
   "question": "the full question text",
   "correct_answer": "the correct answer option and its text",
   "explanation": "the explanation for why this is correct",
   "anki_front": "a concise question for the front of the anki card",
   "anki_back": "a concise answer + key explanation for the back of the card"
+}
+
+If it is NOT a medical question (e.g., a random screenshot, chat, webpage), return:
+{
+  "is_question": false,
+  "reason": "brief explanation of what the image actually is"
 }"""
 
     response = client.chat.completions.create(

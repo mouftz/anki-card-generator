@@ -101,7 +101,15 @@ function App() {
 
       {error && <div className="error">{error}</div>}
 
-      {result && (
+      {result && result.is_question === false && (
+        <div className="rejected">
+          <div className="rejected-title">⚠ Not a medical question</div>
+          <div className="rejected-reason">{result.reason}</div>
+          <button className="btn-primary" onClick={handleClose}>Close</button>
+        </div>
+      )}
+
+      {result && result.is_question === true && (
         <div className="success">
           <div className="success-title">✓ Card added to "{result.deck}"</div>
           <div className="card-preview">

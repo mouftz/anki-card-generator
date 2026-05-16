@@ -141,3 +141,23 @@ kbd {
   text-transform: uppercase;
   margin-bottom: 4px;
 }
+
+.rejected {
+  background: #3a2a0e;
+  border: 1px solid #d97706;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.rejected-title {
+  color: #fbbf24;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.rejected-reason {
+  color: #aaa;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
