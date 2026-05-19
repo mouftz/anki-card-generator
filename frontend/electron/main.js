@@ -26,7 +26,7 @@ function createPopupWindow() {
   });
 
   popupWindow.loadFile(path.join(__dirname, '..', 'src', 'index.html'));
-//   popupWindow.webContents.openDevTools({ mode: 'detach' });
+  popupWindow.webContents.openDevTools({ mode: 'detach' });
   
   popupWindow.on('closed', () => {
     popupWindow = null;
@@ -83,7 +83,29 @@ ipcMain.handle('generate-card', async (event, { imageBase64, reason }) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        image_base64: imageBase64,
+        image_base64: imageBase64
+      })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Backend error: ${errorText}`);
+    }
+    
+    return await response.json();
+  } catch (err) {
+    return { error: err.message };
+  }
+});
+
+ipcMain.handle('save-card', async (event, { front, back, reason }) => {
+  try {
+    const response = await fetch('http://127.0.0.1:8001/save-card', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        anki_front: front,
+        anki_back: back,
         reason: reason
       })
     });

@@ -25,13 +25,20 @@ function App() {
   const [screenshot, setScreenshot] = useState(null);
   const [reason, setReason] = useState(REASONS[0]);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [generatedCard, setGeneratedCard] = useState(null);
+  const [editedFront, setEditedFront] = useState("");
+  const [editedBack, setEditedBack] = useState("");
+  const [saveResult, setSaveResult] = useState(null);
+  const [rejected, setRejected] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     window.api.onScreenshot((base64) => {
       setScreenshot(base64);
-      setResult(null);
+      setGeneratedCard(null);
+      setSaveResult(null);
+      setRejected(null);
       setError(null);
     });
   }, []);
@@ -42,18 +49,39 @@ function App() {
     setError(null);
 
     const response = await window.api.generateCard(screenshot, reason);
+    console.log('Generate response:', response);
     setLoading(false);
 
     if (response.error) {
       setError(response.error);
+    } else if (response.is_question === false) {
+      setRejected(response.reason);
     } else {
-      setResult(response);
+      setGeneratedCard(response);
+      setEditedFront(response.anki_front);
+      setEditedBack(response.anki_back);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setError(null);
+
+    const response = await window.api.saveCard(editedFront, editedBack, reason);
+    setSaving(false);
+
+    if (response.error) {
+      setError(response.error);
+    } else {
+      setSaveResult(response);
     }
   };
 
   const handleClose = () => {
     window.api.hidePopup();
-    setResult(null);
+    setGeneratedCard(null);
+    setSaveResult(null);
+    setRejected(null);
     setError(null);
     setScreenshot(null);
   };
@@ -78,7 +106,7 @@ function App() {
 
       <img src={`data:image/png;base64,${screenshot}`} className="preview" />
 
-      {!result && (
+      {!generatedCard && !rejected && !saveResult && (
         <>
           <label className="label">Why did you get it wrong?</label>
           <select 
@@ -101,27 +129,45 @@ function App() {
 
       {error && <div className="error">{error}</div>}
 
-      {result && result.is_question === false && (
+      {rejected && (
         <div className="rejected">
           <div className="rejected-title">⚠ Not a medical question</div>
-          <div className="rejected-reason">{result.reason}</div>
+          <div className="rejected-reason">{rejected}</div>
           <button className="btn-primary" onClick={handleClose}>Close</button>
         </div>
       )}
 
-      {result && result.is_question === true && (
+      {generatedCard && !saveResult && (
+        <>
+          <label className="label">Front (edit if needed)</label>
+          <textarea
+            className="textarea"
+            value={editedFront}
+            onChange={(e) => setEditedFront(e.target.value)}
+            rows={3}
+          />
+
+          <label className="label">Back (edit if needed)</label>
+          <textarea
+            className="textarea"
+            value={editedBack}
+            onChange={(e) => setEditedBack(e.target.value)}
+            rows={6}
+          />
+
+          <button 
+            className="btn-primary" 
+            onClick={handleSave}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Save to Anki"}
+          </button>
+        </>
+      )}
+
+      {saveResult && (
         <div className="success">
-          <div className="success-title">✓ Card added to "{result.deck}"</div>
-          <div className="card-preview">
-            <div className="card-section">
-              <div className="card-label">Front</div>
-              <div>{result.card.anki_front}</div>
-            </div>
-            <div className="card-section">
-              <div className="card-label">Back</div>
-              <div>{result.card.anki_back}</div>
-            </div>
-          </div>
+          <div className="success-title">✓ Card added to "{saveResult.deck}"</div>
           <button className="btn-primary" onClick={handleClose}>Done</button>
         </div>
       )}

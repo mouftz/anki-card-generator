@@ -7,6 +7,9 @@ contextBridge.exposeInMainWorld('api', {
   generateCard: (imageBase64, reason) => {
     return ipcRenderer.invoke('generate-card', { imageBase64, reason });
   },
+  saveCard: (front, back, reason) => {
+    return ipcRenderer.invoke('save-card', { front, back, reason });
+  },
   hidePopup: () => {
     ipcRenderer.send('hide-popup');
   }

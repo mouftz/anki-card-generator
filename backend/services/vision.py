@@ -18,11 +18,11 @@ First, determine if this is a medical exam/study question with a clear correct a
 If it IS a medical question, return JSON only, no markdown:
 {
   "is_question": true,
-  "question": "the full question text",
-  "correct_answer": "the correct answer option and its text",
-  "explanation": "the explanation for why this is correct",
-  "anki_front": "a concise question for the front of the anki card",
-  "anki_back": "a concise answer + key explanation for the back of the card"
+  "question": "the full question text, preserved verbatim with all clinical details (patient age, sex, symptoms, vitals, lab values, history). Do not summarize or paraphrase.",
+  "correct_answer": "the correct answer option letter and full text exactly as written",
+  "explanation": "the full explanation from the question bank, preserving clinical reasoning and key details. Do not over-condense.",
+  "anki_front": "the question as written, keeping the clinical vignette intact. Include the patient presentation, key findings, and the actual question being asked. Do not collapse the vignette into a single short sentence.",
+  "anki_back": "the correct answer with the full clinical reasoning. Include why this answer is correct AND briefly why the other key distractors are wrong if mentioned. Should be thorough enough to actually learn from, not just memorize."
 }
 
 If it is NOT a medical question (e.g., a random screenshot, chat, webpage), return:
@@ -53,7 +53,11 @@ If it is NOT a medical question (e.g., a random screenshot, chat, webpage), retu
     )
     
     content = response.choices[0].message.content
-    # Strip markdown fences and find the JSON object
+    
+    if not content:
+        # Model returned empty — likely rate limited or filtered
+        raise Exception("Model returned empty response. Try again or switch models.")
+    
     content = content.replace("```json", "").replace("```", "").strip()
     
     # Find first { and last } to extract JSON even if there's surrounding text
@@ -62,4 +66,7 @@ If it is NOT a medical question (e.g., a random screenshot, chat, webpage), retu
     if start != -1 and end != -1:
         content = content[start:end+1]
     
-    return json.loads(content)
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        return json.loads(content, strict=False)
